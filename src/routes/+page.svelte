@@ -1,16 +1,22 @@
 <script lang="ts">
-	type UploadResponse = {
-		success: boolean;
-		error?: string;
-	};
-
 	import { onDestroy } from 'svelte';
-	import { env } from '$env/dynamic/public';
+
+	interface PhotoUpload {
+		filename: string;
+		url: string;
+	}
+
+	interface UploadResponse {
+		success: boolean;
+		photos?: PhotoUpload[];
+		error?: string;
+	}
 
 	let files: FileList | null = null;
 	let previewUrls: string[] = [];
 	let uploading = false;
 	let message = '';
+	let uploadedPhotos: PhotoUpload[] = [];
 
 	function handleFiles(event: Event): void {
 		const target = event.target as HTMLInputElement;
@@ -38,6 +44,7 @@
 
 		uploading = true;
 		message = '';
+		uploadedPhotos = [];
 
 		try {
 			const formData = new FormData();
@@ -45,22 +52,24 @@
 				formData.append('photos', file);
 			});
 
-			const response = await fetch(env.PUBLIC_OBSIDIAN_URL, {
+			const response = await fetch('/api/photos', {
 				method: 'POST',
 				body: formData
 			});
 
 			const result: UploadResponse = await response.json();
 
-			if (result.success) {
-				message = 'Upload successful';
+			if (result.success && result.photos) {
+				message = 'Photos uploaded successfully';
+				uploadedPhotos = result.photos;
 				files = null;
 				previewUrls = [];
 			} else {
-				throw new Error(result.error);
+				throw new Error(result.error || 'Upload failed');
 			}
 		} catch (error) {
 			message = error instanceof Error ? error.message : 'Upload failed';
+			console.error('Upload error:', error);
 		} finally {
 			uploading = false;
 		}
@@ -92,7 +101,7 @@
 		<div class="my-4 grid grid-cols-2 gap-4">
 			{#each previewUrls as url, i}
 				<div class="aspect-square relative">
-					<img src={url} alt="" class="h-full w-full rounded-lg object-cover" />
+					<img src={url} alt="Preview" class="h-full w-full rounded-lg object-cover" />
 					<button
 						class="absolute right-2 top-2 h-6 w-6 rounded-full bg-red-500 text-white"
 						on:click={() => removeFile(i)}
@@ -115,6 +124,17 @@
 	{#if message}
 		<div class="mt-4 rounded-lg p-4 {message.includes('failed') ? 'bg-red-100' : 'bg-green-100'}">
 			{message}
+		</div>
+	{/if}
+
+	{#if uploadedPhotos.length}
+		<div class="mt-4">
+			<h3 class="mb-2 font-medium">Uploaded Photos:</h3>
+			<div class="grid grid-cols-2 gap-4">
+				{#each uploadedPhotos as photo}
+					<img src={photo.url} alt={photo.filename} class="h-48 w-full rounded-lg object-cover" />
+				{/each}
+			</div>
 		</div>
 	{/if}
 </div>
