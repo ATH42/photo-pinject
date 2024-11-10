@@ -45,5 +45,8 @@
 		"@inlang/paraglide-sveltekit": "^0.11.1",
 		"drizzle-orm": "^0.33.0",
 		"postgres": "^3.4.4"
+	},
+	"overrides": {
+		"string-width": "4.2.3"
 	}
 }
