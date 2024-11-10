@@ -47,6 +47,10 @@
 		"postgres": "^3.4.4"
 	},
 	"overrides": {
-		"string-width": "4.2.3"
+		"string-width": "4.2.3",
+		"strip-ansi": "6.0.1",
+		"ansi-regex": "5.0.1",
+		"is-fullwidth-code-point": "3.0.0",
+		"emoji-regex": "8.0.0"
 	}
 }
