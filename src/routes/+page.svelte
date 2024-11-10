@@ -5,6 +5,7 @@
 	};
 
 	import { onDestroy } from 'svelte';
+	import { env } from '$env/dynamic/public';
 
 	let files: FileList | null = null;
 	let previewUrls: string[] = [];
@@ -44,7 +45,7 @@
 				formData.append('photos', file);
 			});
 
-			const response = await fetch('http://localhost:27123/addImages', {
+			const response = await fetch(env.PUBLIC_OBSIDIAN_URL, {
 				method: 'POST',
 				body: formData
 			});
