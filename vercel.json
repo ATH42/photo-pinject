@@ -1,0 +1,4 @@
+{
+	"buildCommand": "ROLLUP_NATIVE=never npm run build",
+	"installCommand": "ROLLUP_NATIVE=never npm install"
+}

@@ -57,5 +57,10 @@
 		"@sveltejs/kit": {
 			"rollup": "npm:@rollup/wasm-node"
 		}
+	},
+	"pnpm": {
+		"overrides": {
+			"rollup": "npm:@rollup/wasm-node"
+		}
 	}
 }
